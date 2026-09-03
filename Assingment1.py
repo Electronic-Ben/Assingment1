@@ -71,6 +71,25 @@ class TempConverter(Problem):
         ans = float(input("Enter temp to convert: "))
         return func(ans)
 
+class TipCalculator(Problem):
+    name = "Tip Calculator"
+
+    def callback(self):
+        bill = self.get_bill()
+        percent = self.get_percent()
+        split_tip = self.get_split(bill * percent / 100)
+
+        print("Each person should tip $" + str(round(split_tip), 2))
+
+    def get_bill():
+        return float(input("What was you bill? (Enter: 000.00) "))
+    
+    def get_percent():
+        return float(input("What percentage do you want to tip? "))
+    
+    def get_split(tip):
+        return tip / int(input("How many poeple are splitting the tip? "))
+
 class Menu:
     problems = []
     selected = 0
@@ -108,6 +127,7 @@ def init_menu(menu):
     menu.add_problem(Logo)
     menu.add_problem(TrendingTracker)
     menu.add_problem(TempConverter)
+    menu.add_problem(TipCalculator)
     
 def main_loop():
     run = True
