@@ -1,7 +1,24 @@
 import os
+import math
 
 def clear():
     os.system("cls")
+
+def get_float(message):
+    try:
+        ans = float(input(message))
+    except Exception as e:
+        print("Invalid.")
+        return get_float(message)
+    return ans
+
+def get_int(message):
+    try:
+        ans = int(input(message))
+    except Exception as e:
+        print("Invalid.")
+        return get_int(message)
+    return ans
 
 class Problem:
     name = "Problem"
@@ -9,6 +26,12 @@ class Problem:
     def callback():
         print("UNASSIGNED")
 
+'''
+Using print() statements and your imagination, write a function called display_logo() that shows a
+unique logo you can add to your programs. The logo should be at least 5 lines tall and use at least 3
+different characters.
+Demonstrate your function works by calling it from the main part of your program.
+'''
 
 class Logo(Problem):
     name = "Logo"
@@ -23,6 +46,15 @@ class Logo(Problem):
             " \\===/ "
         )
 
+'''
+In preparation for your future career providing live streaming coverage, you're going to make a
+program to help measure the popularity of a stream.
+The user should enter the total number of views and the hours, minutes, and seconds that have
+passed since the start of the stream. The output should be the ratio of viewers per second.
+Create a function that converts hours/minutes/seconds into total seconds, and another function that
+calculates and returns the viewers-per-second ratio.
+'''
+
 class TrendingTracker(Problem):
     name = "Trendy"
 
@@ -33,19 +65,23 @@ class TrendingTracker(Problem):
         print("You averaged about " + str(round(views/time, 3)) + " views per second")
 
     def enter_views():
-        user_in = int(input("How many total views? "))
+        user_in = get_int("How many total views? ")
         return user_in
     
     def get_time():
-        ans = input("Enter time (00h 00m 00s): ")
-
-        segs = ans.split(' ')
-        h = int(segs[0][:-1])
-        m = int(segs[1][:-1])
-        s = int(segs[2][:-1])
+        
+        h = get_int("Enter hours streamed: ")
+        m = get_int("Enter minutes streamed: ")
+        s = get_int("Enter seconds streamed: ")
 
         return (h * 60 * 60) + (m * 60) + s
     
+'''
+Write a program with two functions: one that converts Fahrenheit to Celsius, and one that converts
+Celsius to Fahrenheit.
+The program should let the user choose which conversion they need, enter a value, and get the result
+formatted to two decimal places.
+'''
 
 class TempConverter(Problem):
     name = "Temperature Converter"
@@ -63,13 +99,21 @@ class TempConverter(Problem):
         elif ans.lower() == 'c':
             return [lambda x: (x * 9.0/5.0) + 32, ans.upper()]
         else:
-            print("Invalid input.")
-            
+            print("Invalid.")
             return self.get_function(self)
         
     def get_temp(self, func):
-        ans = float(input("Enter temp to convert: "))
+        ans = get_float("Enter temp to convert: ")
         return func(ans)
+
+'''
+Write a program that helps restaurant patrons calculate tips. Create functions that:
+ - Calculate the tip amount given a bill and percentage
+ - Calculate the total including tip
+ - Calculate how to split the bill among a group
+Let the user enter their bill amount, preferred tip percentage, and number of people splitting. Display
+a nicely formatted summary.
+'''
 
 class TipCalculator(Problem):
     name = "Tip Calculator"
@@ -77,18 +121,55 @@ class TipCalculator(Problem):
     def callback(self):
         bill = self.get_bill()
         percent = self.get_percent()
-        split_tip = self.get_split(bill * percent / 100)
+        split = self.get_split()
+        tip = bill * percent / 100
 
-        print("Each person should tip $" + str(round(split_tip), 2))
+        print("\nTotal Bill: $" + str(bill))
+        print("Tip Percentage: " + str(percent))
+        print("Number of people: " + str(split))
+        print("\nEach person should tip $" + str(round(tip / split, 2)))
 
     def get_bill():
-        return float(input("What was you bill? (Enter: 000.00) "))
+        return get_float("What was you bill? (Enter: 000.00) ")
     
     def get_percent():
-        return float(input("What percentage do you want to tip? "))
+        return get_float("What percentage do you want to tip? ")
     
-    def get_split(tip):
-        return tip / int(input("How many poeple are splitting the tip? "))
+    def get_split():
+        return get_int("How many poeple are splitting the tip? ")
+
+class Challenge(Problem):
+    name = "Stage Light Calculator"
+
+    def callback(self):
+        [shutter_angle, dist] = self.calc_angle()
+        brightness = self.calc_brightness(dist)
+
+        if shutter_angle >= 90 or shutter_angle <= -90:
+            print("Settings not possible. Try again.")
+            clear()
+            self.callback(self)
+            return
+        
+        print("\nThe needed shutter angle is " + str(round(shutter_angle, 3)) + " degrees.")
+        print("The stage will be lit with " + str(round(brightness, 3)) + " lumens per square meter.")
+
+    def calc_angle():
+        lense_dia = get_float("Diameter of lense: ")
+        light_dia = get_float("Diameter of expected light circle: ")
+        dist = get_float("Distance of light from stage: ")
+
+        opp = (light_dia / 2) - (lense_dia / 2)
+        
+        return math.atan(opp / dist), dist
+
+    def calc_brightness(dist):
+        lumens = get_float("Brightness in lumens: ")
+
+        return lumens / (dist * dist)
+
+
+
 
 class Menu:
     problems = []
@@ -128,6 +209,7 @@ def init_menu(menu):
     menu.add_problem(TrendingTracker)
     menu.add_problem(TempConverter)
     menu.add_problem(TipCalculator)
+    menu.add_problem(Challenge)
     
 def main_loop():
     run = True
