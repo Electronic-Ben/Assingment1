@@ -151,17 +151,17 @@ class Challenge(Problem):
             self.callback(self)
             return
         
-        print("\nThe needed shutter angle is " + str(round(shutter_angle, 3)) + " degrees.")
+        print("\nThe needed angle is " + str(round(shutter_angle, 3)) + " degrees.")
         print("The stage will be lit with " + str(round(brightness, 3)) + " lumens per square meter.")
 
     def calc_angle():
-        lense_dia = get_float("Diameter of lense: ")
         light_dia = get_float("Diameter of expected light circle: ")
         dist = get_float("Distance of light from stage: ")
 
-        opp = (light_dia / 2) - (lense_dia / 2)
+        opp = light_dia / 2.0
+        angle = math.atan(opp / dist) *2 * (180/math.pi)
         
-        return math.atan(opp / dist), dist
+        return angle, dist
 
     def calc_brightness(dist):
         lumens = get_float("Brightness in lumens: ")
